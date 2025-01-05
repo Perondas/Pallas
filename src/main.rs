@@ -3,34 +3,33 @@ use std::{
     sync::Arc,
     time::{Duration, SystemTime},
 };
-
+use clap::Parser;
 use dashmap::DashMap;
 use hemtt_pbo::ReadablePbo;
 use hemtt_signing::BIPrivateKey;
 use indicatif::ProgressBar;
 use pallas::state::State;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use pallas::args::Args;
 
 #[allow(clippy::too_many_lines)]
 fn main() {
-    // first cli arg is the source directory
-    let src_dir = std::env::args()
-        .nth(1)
-        .expect("Please provide the source directory");
-    let src_dir = std::path::Path::new(&src_dir);
+    let args = Args::parse();
+
+    let src_dir = args.source_dir;
     if !src_dir.exists() || !src_dir.is_dir() {
         println!("Source directory does not exist");
         std::process::exit(1);
     }
 
-    let previous_state = State::load(src_dir).unwrap_or_default();
+    let previous_state = State::load(&src_dir).unwrap_or_default();
     let mut new_state = State::default();
 
     let keys = DashMap::new();
 
     let mut mods = Vec::new();
     let mut addons = Vec::new();
-    for dirs in std::fs::read_dir(src_dir).expect("can't read root dir") {
+    for dirs in std::fs::read_dir(&src_dir).expect("can't read root dir") {
         let dir = dirs.expect("can't read dir");
         if !dir.path().is_dir() {
             continue;
