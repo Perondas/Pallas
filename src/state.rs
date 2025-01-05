@@ -18,7 +18,7 @@ impl State {
     ///
     /// # Panics
     /// If the path can't be converted to a string
-    pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, anyhow::Error> {
         let path = path.as_ref().join(STATE_FILE);
         let state = savefile::load_file(path.to_str().expect("path can be str"), VERSION)?;
         Ok(state)
@@ -31,7 +31,7 @@ impl State {
     ///
     /// # Panics
     /// If the path can't be converted to a string
-    pub fn save<P: AsRef<Path>>(&self, path: P) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn save<P: AsRef<Path>>(&self, path: P) -> Result<(), anyhow::Error> {
         let path = path.as_ref().join(STATE_FILE);
         savefile::save_file(path.to_str().expect("path can be str"), VERSION, self)?;
         Ok(())
