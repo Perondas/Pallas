@@ -21,9 +21,9 @@ fn main() -> Result<()> {
     let mods = get_mod_dirs(entries);
 
     let mut state = State::load(&source_dir).unwrap_or_default();
-    
+
     for mod_path in mods.iter().map(|e| e.path()) {
-        println!("Processing {:?}", mod_path.as_path(),);
+        println!("Processing {:?}", get_folder_name(&mod_path)?);
 
         if check_contains_ebo(&mod_path) {
             eprintln!("Mod {} contains EBO files", get_folder_name(&mod_path)?);
@@ -75,17 +75,12 @@ fn get_pbos_to_sign(
 
     let pbo_paths = get_pbos_in_dir(&addons_folder_path)?;
 
-    if let Some(last_seen_modification) =
-        state.modified(&get_folder_name(mod_folder_path)?)
-    {
+    if let Some(last_seen_modification) = state.modified(&get_folder_name(mod_folder_path)?) {
         let unseen_modifications = pbo_paths
             .iter()
             .filter_map(|p| p.metadata().ok().map(|m| m.modified().ok()))
             .flatten()
             .any(|m| m >= last_seen_modification);
-
-        println!("Unseen modifications: {}", unseen_modifications);
-        println!("Last seen modification: {:?}", last_seen_modification);
 
         if !unseen_modifications {
             return Ok(vec![]);
