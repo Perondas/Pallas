@@ -39,7 +39,7 @@ fn main() -> Result<()> {
         };
 
         if pbos.is_empty() {
-            println!("No new PBOS to sign in {:?}", mod_path.as_path());
+            println!("No new PBOS to sign in {:?}", get_folder_name(&mod_path)?);
             continue;
         }
 
