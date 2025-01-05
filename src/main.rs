@@ -23,7 +23,7 @@ fn main() -> Result<()> {
     let mut state = State::load(&source_dir).unwrap_or_default();
 
     for mod_path in mods.iter().map(|e| e.path()) {
-        println!("Processing {:?}", get_folder_name(&mod_path)?);
+        println!("Processing {}", get_folder_name(&mod_path)?);
 
         if check_contains_ebo(&mod_path) {
             eprintln!("Mod {} contains EBO files", get_folder_name(&mod_path)?);
@@ -39,7 +39,7 @@ fn main() -> Result<()> {
         };
 
         if pbos.is_empty() {
-            println!("No new PBOS to sign in {:?}", get_folder_name(&mod_path)?);
+            println!("No new PBOS to sign in {}", get_folder_name(&mod_path)?);
             continue;
         }
 
@@ -53,7 +53,7 @@ fn main() -> Result<()> {
             SystemTime::now() - Duration::from_secs(1),
         );
 
-        println!("Done processing {:?}\n", mod_path.as_path());
+        println!("Done processing {}\n", get_folder_name(&mod_path)?);
     }
 
     state.save(&source_dir)?;
@@ -110,7 +110,7 @@ fn sign_pbos(mod_folder_path: &Path, pbo_paths: Vec<PathBuf>) -> Result<()> {
             let pb = pb2.clone();
             s.spawn(move |_| {
                 if let Err(e) = sign_pbo(&pbo_path, &key, &authority) {
-                    eprintln!("Failed to sign {:?}: {:#?}", pbo_path, e);
+                    eprintln!("Failed to sign {:?}: {:?}", pbo_path, e);
                 }
                 pb.inc(1);
             });
