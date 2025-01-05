@@ -21,9 +21,7 @@ fn main() -> Result<()> {
     let mods = get_mod_dirs(entries);
 
     let mut state = State::load(&source_dir).unwrap_or_default();
-
-    println!("Found {:?} mods", state);
-
+    
     for mod_path in mods.iter().map(|e| e.path()) {
         println!("Processing {:?}", mod_path.as_path(),);
 
